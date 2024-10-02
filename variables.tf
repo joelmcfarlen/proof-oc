@@ -16,7 +16,7 @@ variable "vpc_cidr" {
 }
 
 
-// Subnets
+// Networking
 variable "public_1_proof_oc" {
   description = "CIDR block for public subnet 1 for Proof OC"
   type        = string
@@ -37,8 +37,6 @@ variable "private_2_proof_oc" {
   type        = string
 }
 
-
-// Availability Zones
 variable "az1_proof_oc" {
   description = "Availability Zone 1 for Proof OC"
   type        = string
@@ -78,7 +76,6 @@ variable "jumpbox_volume_proof_oc" {
 
 
 // Web Instance
-
 variable "web_ami_id_proof_oc" {
   description = "EC2 instance AMI for the Web Proof OC"
   type        = string
