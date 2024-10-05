@@ -1,5 +1,6 @@
 // Web ASG
 resource "aws_autoscaling_group" "asg_proof_oc" {
+  name = "asg-${var.project_name}"
   vpc_zone_identifier = [aws_subnet.private_1_proof_oc.id, aws_subnet.private_2_proof_oc.id]
   launch_template {
     id      = aws_launch_template.asg_launch_template_proof_oc.id
@@ -10,17 +11,10 @@ resource "aws_autoscaling_group" "asg_proof_oc" {
   max_size = 6
   desired_capacity = 2
 
-  target_group_arns = [aws_lb_target_group.alb_target_group.arn]
+  target_group_arns = [aws_lb_target_group.alb_target_group_proof_oc.arn]
 
   health_check_type         = "EC2"
   health_check_grace_period = 600
-
-  tag {
-    key                 = "Name"
-    value               = "asg-${var.project_name}"
-    propagate_at_launch = true
-  }
-  
   tag {
     key                 = "Project"
     value               = var.project_name
@@ -35,7 +29,7 @@ resource "aws_launch_template" "asg_launch_template_proof_oc" {
   image_id      = var.web_ami_id_proof_oc
   instance_type = var.web_instance_type_proof_oc
 
-  key_name = var.ssh_key_proof_oc
+  key_name = var.web_ssh_key_proof_oc
 
   iam_instance_profile {
     name = aws_iam_instance_profile.asg_instance_profile.name
@@ -53,6 +47,14 @@ resource "aws_launch_template" "asg_launch_template_proof_oc" {
     network_interfaces {
     associate_public_ip_address = false
     security_groups             = [aws_security_group.web_instance_sg_proof_oc.id]
+  }
+
+    tag_specifications {
+    resource_type = "instance"
+
+    tags = {
+      Name    = "web-${var.project_name}"
+    }
   }
 
 // Web User Data
@@ -97,7 +99,7 @@ resource "aws_iam_role_policy" "asg_ec2_s3_policy" {
       {
         Effect = "Allow"
         Action = [
-          "s3:GetObject"
+          "s3:PutObject"
         ]
         Resource = "arn:aws:s3:::images/*" 
       }
@@ -139,7 +141,6 @@ resource "aws_security_group" "web_instance_sg_proof_oc" {
   }
 
   tags = {
-    "Project" = var.project_name
     "Name"    = "asg-instance-sg-${var.project_name}"
   }
 }

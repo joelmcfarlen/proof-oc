@@ -4,11 +4,10 @@ resource "aws_instance" "jumpbox_instance_proof_oc" {
   instance_type = var.jumpbox_instance_type_proof_oc
   subnet_id     = aws_subnet.public_2_proof_oc.id
   vpc_security_group_ids = [aws_security_group.jumpbox_sg_proof_oc.id]
-  key_name               = var.ssh_key_proof_oc
+  key_name               = var.jumpbox_ssh_key_proof_oc
 
   tags = {
-    "Project" = var.project_name
-    "Name"    = "ec2-redhat-${var.project_name}"
+    "Name"              = "jumpbox-${var.project_name}"
   }
 
 // Storage
@@ -26,11 +25,9 @@ resource "aws_eip" "jumpbopx_eip_proof_oc" {
   depends_on                = [aws_internet_gateway.igw_proof_oc]
 
   tags = {
-    "Project" = var.project_name
-    "Name"    = "jumpbox-eip-${var.project_name}"
+    "Name"              = "jumpbox-eip-${var.project_name}"
   }
 }
-
 
 // Security Group
 resource "aws_security_group" "jumpbox_sg_proof_oc" {
@@ -61,11 +58,9 @@ resource "aws_security_group" "jumpbox_sg_proof_oc" {
   }
 
   tags = {
-    "Project" = var.project_name
-    "Name"    = "jumpbox-sg-${var.project_name}"
+    "Name"              = "jumpbox-sg-${var.project_name}"
   }
 }
-
 
 // IAM Role
 resource "aws_iam_role" "jumpbox_role_proof_oc" {
@@ -85,8 +80,9 @@ resource "aws_iam_role" "jumpbox_role_proof_oc" {
   })
 }
 
+// IAM Policy for S3 Access
 resource "aws_iam_role_policy" "s3_access_policy" {
-  name   = "s3-access-policy"
+  name   = "s3-access-policy-${var.project_name}"
   role   = aws_iam_role.jumpbox_role_proof_oc.id
 
   policy = jsonencode({
@@ -95,8 +91,7 @@ resource "aws_iam_role_policy" "s3_access_policy" {
       {
         Effect = "Allow"
         Action = [
-          "s3:PutObject",
-          "s3:PutObjectAcl"
+          "s3:PutObject"
         ]
         Resource = "arn:aws:s3:::logs/*"
       }

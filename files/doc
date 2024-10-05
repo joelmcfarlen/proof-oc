@@ -1,0 +1,74 @@
+**********Documentation for Proof of Concept Project**********
+
+/// Overview
+
+This Terraform project consists of several components, each defining key resources necessary to build and deploy a cloud simple infrastructure proof of concept. The project includes configurations for an Auto Scaling Group (ASG) to manage web server instances, a Virtual Private Cloud (VPC) with multiple subnets, an Application Load Balancer (ALB) for traffic distribution, and S3 buckets for data storage. Additionally, it provisions a secure jumpbox for administrative access. The project is modular, leveraging reusable components to deploy infrastructure for high availability, security, and scalability.
+
+/// 1. web.tf
+   - Auto Scaling Group (ASG):
+     - Defines an ASG to manage the scaling of web server instances across multiple subnets in private zones.
+     - Launches instances using a predefined launch template that includes instance configuration such as image, instance type, and block device mapping.
+     - Configures health checks to monitor the instances and maintain desired capacity based on specified scaling rules.
+     - The ASG is associated with a load balancer target group, ensuring that web traffic is distributed evenly across the instances.
+
+   - Launch Template:
+     - Configures a launch template that defines the settings for EC2 instances, including the AMI, instance type, storage options, and network interfaces.
+     - Instances created from this template are deployed without public IP addresses, ensuring they remain within private subnets.
+     - Specifies user data to bootstrap the instances with necessary software and services, such as a web server.
+
+   - IAM Role:
+     - Creates an IAM role that allows EC2 instances to interact with AWS services securely. The role can be assumed by the instances to perform specific tasks, such as accessing storage or updating health checks.
+
+/// 2. vpc.tf
+   - VPC:
+     - Provisions a Virtual Private Cloud (VPC) to isolate and manage resources securely in a private network.
+     - Configures basic VPC settings, including CIDR block allocation and DNS support for internal name resolution.
+  
+   - Subnets:
+     - Defines multiple subnets, separating public and private zones to organize resources based on their access requirements.
+     - Public subnets are designed to host resources that require direct internet access, while private subnets are reserved for backend systems that should remain isolated from public traffic.
+  
+   - Internet Gateway (IGW):
+     - Attaches an internet gateway to the VPC, enabling resources in public subnets to communicate with the internet.
+
+   - Route Tables:
+     - Configures routing rules for the public and private subnets. The public subnets route traffic to the internet gateway, while private subnets use a different strategy for routing internal traffic.
+  
+/// 3. s3.tf
+   - S3 Buckets:
+     - Creates two S3 buckets for specific use cases.
+     - The first bucket is designed to store image files, providing scalable and durable storage for static content.
+     - The second bucket is intended for log storage, offering a centralized location for collecting and retaining logs from various systems and applications.
+
+/// 4. proof.tfvars
+   - Configuration Values:
+     - This file defines values that are specific to the environment and resources being deployed.
+     - Includes details like network CIDR blocks, instance types, and other configuration parameters needed for the deployment.
+
+/// 5. jumpbox.tf
+   - EC2 Jumpbox:
+     - Provisions a secure EC2 instance, commonly referred to as a jumpbox or bastion host, used for managing resources within the VPC.
+     - The jumpbox is placed in a public subnet and secured with strict access controls, ensuring that only specific users or networks can connect via SSH.
+     - Includes configuration for instance type, block storage, and security settings to provide secure administrative access to resources in private subnets.
+
+/// 6. alb.tf
+   - Application Load Balancer (ALB):
+     - Creates an ALB to distribute incoming traffic to the web servers running in the ASG.
+     - Configures target groups and listener rules to route traffic based on specific conditions, ensuring that requests are handled efficiently by healthy instances.
+     - The ALB is deployed in the public subnets and is linked to the ASG instances, ensuring smooth load balancing across the infrastructure.
+
+/// 7. variables.tf
+   - Project-wide Variables:
+     - Defines reusable variables that are used throughout the Terraform project.
+     - These variables include values for networking, instance configuration, S3 bucket names, and other settings that apply across multiple resources.
+     - Helps to modularize the project and maintain flexibility by keeping environment-specific settings separate from resource definitions.
+
+/// Project Notes:
+   - Assumptions: 
+     - The EC2 instance in the private subnet is intended to serve a web application.
+     - The EC2 instance in the public subnet is intended for web server administration.
+   - Used several of the provided Terraform (TF) templates, which were refined to align with the project code structure.
+   - AI assisted with mundane tasks and minor troubleshooting.
+   - Used the following Stack Overflow and Terraform Registry sites to assist in troubleshooting/configuring the resource "aws_s3_bucket_lifecycle_configuration," as Terraform does not allow multiple Lifecycle Policies to be configured for the same S3 bucket (all policies must be in the same code block).
+    - https://registry.terraform.io/providers/hashicorp/aws/latest/docs/resources/s3_bucket_lifecycle_configuration
+    - https://stackoverflow.com/questions/73432667/is-there-a-way-in-terraform-to-have-multiple-lifecycle-configuration-blocks-for

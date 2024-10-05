@@ -1,20 +1,28 @@
 // Images S3 Bucket
-resource "aws_s3_bucket" "images" {
-  bucket = "images"
+resource "aws_s3_bucket" "images_proof_oc" {
+  bucket = var.images_bucket_name_proof_oc
 
   tags = {
-    "Project" = var.project_name
-    "Name"    = "Images Bucket Proof OC"
+    "Name"              = "Images Bucket Proof OC"
+  }
+  timeouts {
+    create = "5m"    
   }
 }
 
+// Create a "Memes" dir in the images bucket
+resource "aws_s3_object" "memes_folder" {
+  bucket = aws_s3_bucket.images_proof_oc.bucket
+  key    = "Memes/"
+  source = "/dev/null"
+}
 
 // Images S3 Bucket LS Policy
 resource "aws_s3_bucket_lifecycle_configuration" "images_lifecycle" {
-  bucket = aws_s3_bucket.images.bucket
+  bucket = aws_s3_bucket.images_proof_oc.bucket
 
   rule {
-    id     = "Move Memes older than 90 days to Glacier"
+    id     = "memes-90-days-to-glacier"
     status = "Enabled"
 
     filter {
@@ -26,24 +34,43 @@ resource "aws_s3_bucket_lifecycle_configuration" "images_lifecycle" {
       storage_class = "GLACIER"
     }
   }
-}
-
-// Logs S3 Bucket
-resource "aws_s3_bucket" "logs" {
-  bucket = "logs"
-
-  tags = {
-    "Project" = var.project_name
-    "Name"    = "Logs Bucket Proof OC"
+    timeouts {
+    create = "5m"
   }
 }
 
+// Logs S3 Bucket
+resource "aws_s3_bucket" "log_proof_oc" {
+  bucket = var.logs_bucket_name_proof_oc
+
+  tags = {
+    "Name"    = "Logs Bucket Proof OC"
+  }
+    timeouts {
+    create = "5m"   
+  }
+}
+
+// Create a "Active" dir in the logs bucket
+resource "aws_s3_object" "active_folder" {
+  bucket = aws_s3_bucket.log_proof_oc.bucket
+  key    = "Active/"
+  source = "/dev/null"
+}
+
+// Create a "Inactive" dir in the logs bucket
+resource "aws_s3_object" "inactive_folder" {
+  bucket = aws_s3_bucket.log_proof_oc.bucket
+  key    = "Inactive/"
+  source = "/dev/null"
+}
+
 // Logs 'Active" Dir S3 Bucket LS Policy
-resource "aws_s3_bucket_lifecycle_configuration" "logs_active_lifecycle" {
-  bucket = aws_s3_bucket.logs.bucket
+resource "aws_s3_bucket_lifecycle_configuration" "logs_lifecycle" {
+  bucket = aws_s3_bucket.log_proof_oc.bucket
 
   rule {
-    id     = "Move Active logs older than 90 days to Glacier"
+    id     = "active-logs-90-days-to-glacier"
     status = "Enabled"
 
     filter {
@@ -55,14 +82,9 @@ resource "aws_s3_bucket_lifecycle_configuration" "logs_active_lifecycle" {
       storage_class = "GLACIER"
     }
   }
-}
-
-// Logs "Inactive" Dir S3 Bucket LS Policy
-resource "aws_s3_bucket_lifecycle_configuration" "logs_inactive_lifecycle" {
-  bucket = aws_s3_bucket.logs.bucket
 
   rule {
-    id     = "Delete Inactive logs older than 90 days"
+    id     = "delete-inactive-logs-90-days-old"
     status = "Enabled"
 
     filter {
@@ -73,5 +95,10 @@ resource "aws_s3_bucket_lifecycle_configuration" "logs_inactive_lifecycle" {
       days = 90
     }
   }
+
+  timeouts {
+    create = "5m"
+  }
 }
+
 
