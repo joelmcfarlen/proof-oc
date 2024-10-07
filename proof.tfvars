@@ -12,17 +12,17 @@ private_2_proof_oc    = ""
 
 // Jumpbox
 jumpbox_ami_id_proof_oc            = ""  // Red Hat Enterprise Linux 9 AMI used for testing
-jumpbox_instance_type_proof_oc     = ""
-allowed_ssh_cidr_blocks_proof_oc   = ["",""]  // Add DEV CIDRs here in list form for Proof OC Solution access
-jumpbox_ssh_key_proof_oc           = ""  // Manually create in needed region
+jumpbox_instance_type_proof_oc     = "t2.micro"
 jumpbox_volume_proof_oc            = "20"
+jumpbox_ssh_key_proof_oc           = ""  // Manually created in needed region
+allowed_ssh_cidr_blocks_proof_oc   = ["",""]  // Add DEV CIDRs here in list form for Proof OC Solution access
 
 
 // Web
-web_volume_proof_oc          = "20"
-web_instance_type_proof_oc   = "t2.micro"
 web_ami_id_proof_oc          = "" // Red Hat Enterprise Linux 9 AMI used for testing
-web_ssh_key_proof_oc         = ""  // Manually create in needed region
+web_instance_type_proof_oc   = "t2.micro"
+web_volume_proof_oc          = "20"
+web_ssh_key_proof_oc         = ""  // Manually created in needed region
 
 
 // S3

@@ -1,12 +1,11 @@
 **********Documentation for Proof of Concept Project**********
 
 /// Overview
-
-This Terraform project consists of several components, each defining key resources necessary to build and deploy a cloud simple infrastructure proof of concept. The project includes configurations for an Auto Scaling Group (ASG) to manage web server instances, a Virtual Private Cloud (VPC) with multiple subnets, an Application Load Balancer (ALB) for traffic distribution, and S3 buckets for data storage. Additionally, it provisions a secure jumpbox for administrative access. The project is modular, leveraging reusable components to deploy infrastructure for high availability, security, and scalability.
+This Terraform project consists of several components, each defining key resources necessary to build and deploy a simple cloud infrastructure proof of concept. The project includes configurations for an Auto Scaling Group (ASG) to manage web server instances, a Virtual Private Cloud (VPC) with multiple subnets, an Application Load Balancer (ALB) for traffic distribution, and S3 buckets for data/log storage. Additionally, it provisions a secure jumpbox for administrative access. The project is modular, leveraging reusable components to deploy infrastructure for high availability, security, and scalability.
 
 /// 1. web.tf
    - Auto Scaling Group (ASG):
-     - Defines an ASG to manage the scaling of web server instances across multiple subnets in private zones.
+     - Defines an ASG to manage the scaling of web server instances across multiple zones in private subents.
      - Launches instances using a predefined launch template that includes instance configuration such as image, instance type, and block device mapping.
      - Configures health checks to monitor the instances and maintain desired capacity based on specified scaling rules.
      - The ASG is associated with a load balancer target group, ensuring that web traffic is distributed evenly across the instances.
@@ -65,7 +64,7 @@ This Terraform project consists of several components, each defining key resourc
 
 /// Project Notes:
    - Assumptions: 
-     - The EC2 instance in the private subnet is intended to serve a web application.
+     - The EC2 instances in the private subnet are intended to serve a web application.
      - The EC2 instance in the public subnet is intended for web server administration.
    - Used several of the provided Terraform (TF) templates, which were refined to align with the project code structure.
    - AI assisted with mundane tasks and minor troubleshooting.

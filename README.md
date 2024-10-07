@@ -14,12 +14,10 @@ This Terraform module is used to deploy cloud infrastructure including web serve
 - The infrastructure requires 2 SSH key pairs to be created for accessing the jumpbox and web instances (seperate for additional security). These are configured by the variables "ssh_key_proof_oc" and "web_ssh_key_proof_oc" in the tfvars file.
 - Adjust the Auto Scaling Group parameters (min, max, desired capacity) as needed for your environment.
 - The project uses private subnets for web instances, which are not exposed directly to the internet.
-- Ensure that the S3 buckets are set up with appropriate policies and encryption for secure storage.
-- Application Load Balancer routes traffic to the web instances in private subnets to ensure high availability.
 
 
 ## HOW TO DEPLOY:
-Enter the below commands in the "proof-oc" directory to plan/deploy the solution. Update the tfvars file name as needed:
+Enter the below commands in the "proof-oc" directory to plan/deploy/destroy the solution. Update the tfvars file name as needed:
 
 $ terraform init
 
