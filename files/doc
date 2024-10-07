@@ -68,6 +68,6 @@ This Terraform project consists of several components, each defining key resourc
      - The EC2 instance in the public subnet is intended for web server administration.
    - Used several of the provided Terraform (TF) templates, which were refined to align with the project code structure.
    - AI assisted with mundane tasks and minor troubleshooting.
-   - Used the following Stack Overflow and Terraform Registry sites to assist in troubleshooting/configuring the resource "aws_s3_bucket_lifecycle_configuration," as Terraform does not allow multiple Lifecycle Policies to be configured for the same S3 bucket (all policies must be in the same code block).
+   - Used the following Stack Overflow and Terraform Registry sites to assist in troubleshooting/configuring the resource "aws_s3_bucket_lifecycle_configuration," as Terraform does not allow multiple Lifecycle Policies to be configured for the same S3 bucket (all policies must be in the same code block). Note the added timeouts in the S3 code blocks and variablized S3 bucket names to asist in troubleshooting when deploying S3 resources mutiple times via Terraform.
     - https://registry.terraform.io/providers/hashicorp/aws/latest/docs/resources/s3_bucket_lifecycle_configuration
     - https://stackoverflow.com/questions/73432667/is-there-a-way-in-terraform-to-have-multiple-lifecycle-configuration-blocks-for
